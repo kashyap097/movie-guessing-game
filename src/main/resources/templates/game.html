@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Movie Guessing Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 20px; }
+        .movie-box { font-size: 2rem; letter-spacing: 5px; margin: 20px; font-weight: bold; }
+        .keyboard { display: grid; grid-template-columns: repeat(7, 50px); gap: 10px; justify-content: center; margin-top: 20px; }
+        .key-btn { padding: 12px; font-size: 1.1rem; cursor: pointer; background: #ffffff; border: 2px solid #3498db; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+        .key-btn:hover { background: #3498db; color: white; }
+
+        /* 💡 यह नई क्लास है जो दबाए हुए बटन्स पर लगेगी */
+        .key-btn.used {
+            background: #bdc3c7 !important;
+            color: #7f8c8d !important;
+            border-color: #95a5a6 !important;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status { font-size: 1.2rem; margin: 15px; color: #555; }
+        .msg { font-size: 1.5rem; font-weight: bold; margin: 20px; }
+        .win { color: green; } .lose { color: red; }
+    </style>
+</head>
+<body>
+
+<h1>🎬 Movie Guessing Game</h1>
+
+<div class="status">Remaining Attempts: <span th:text="${attempts}">5</span> / 5</div>
+
+<div class="movie-box" th:text="${displayedName}">_ _ _ _</div>
+
+<div th:if="${isGameOver}" class="msg">
+<!--    <p th:if="${isWon}" class="win">🎉 बधाई हो! आप जीत गए!</p>-->
+    <!-- 🏆 जीतने पर लोकल वीडियो प्लेयर -->
+    <div th:if="${isWon}">
+        <p class="win">🎉 अद्भुत! अविश्वसनीय! शानदार! आप जीत गए! 🎉</p>
+
+        <div style="margin: 20px auto; max-width: 560px;">
+            <!-- HTML5 वीडियो प्लेयर - ऑटोप्ले और कंट्रोल्स के साथ -->
+            <video width="100%" height="auto" autoplay controls style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                <source src="/videos/7crore.mp4" type="video/mp4">
+                आपका ब्राउज़र वीडियो टैग का समर्थन नहीं करता है।
+            </video>
+        </div>
+    </div>
+
+    <!-- ❌ केस 2: जब खिलाड़ी गेम हार जाए (फनी मीम वीडियो) -->
+    <div th:unless="${isWon}">
+        <p class="lose">❌ गेम ओवर! आप हार गए। बहुत दुखी बात है! ❌</p>
+        <div style="margin: 20px auto; max-width: 560px;">
+            <!-- लोकल हारने वाला वीडियो प्लेयर -->
+            <video width="100%" height="auto" autoplay controls style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                <source src="/videos/lose.mp4" type="video/mp4">
+                आपका ब्राउज़र वीडियो टैग का समर्थन नहीं करता है।
+            </video>
+        </div>
+    </div>
+    <a href="/game/new"><button style="padding:10px 20px; font-size:1rem; cursor:pointer;">New Game</button></a>
+</div>
+
+<!-- अपडेटेड कीबोर्ड -->
+<!-- अपडेटेड कीबोर्ड (त्रुटि मुक्त) -->
+<div th:unless="${isGameOver}" class="keyboard">
+
+    <!-- T.X. से बचने के लिए हम सीधा 'A' से 'Z' तक के स्ट्रिंग्स को लूप करेंगे -->
+    <div th:each="letterStr : ${#strings.arraySplit('A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z', ',')}" style="display:inline;">
+
+        <!-- थाइमलीफ की मदद से चेक करेंगे कि क्या यह स्ट्रिंग guessedLetters में मौजूद है -->
+        <!-- जावा सेट का .toString() या सीधे स्ट्रिंग कंपैरिजन का इस्तेमाल करके -->
+        <th:block th:with="isUsed=${guessedLetters.toString().contains(letterStr)}">
+
+            <!-- 1. अगर अक्षर इस्तेमाल हो चुका है (या वोवेल है), तो डिसेबल्ड बटन दिखाएं -->
+            <button th:if="${isUsed}" class="key-btn used" th:text="${letterStr}" disabled></button>
+
+            <!-- 2. अगर अक्षर इस्तेमाल नहीं हुआ है, तो क्लिक करने योग्य फॉर्म बटन दिखाएं -->
+            <form th:unless="${isUsed}" th:action="@{/game/guess}" method="post" style="display:inline;">
+                <input type="hidden" name="letter" th:value="${letterStr}" />
+                <button type="submit" class="key-btn" th:text="${letterStr}"></button>
+            </form>
+
+        </th:block>
+    </div>
+</div>
+
+
+</body>
+</html>
