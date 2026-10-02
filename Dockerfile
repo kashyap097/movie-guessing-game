@@ -3,10 +3,8 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
 
-# 💡 यह नई लाइन लिनक्स सर्वर परmvnw फ़ाइल को चलने की परमिशन (Permission) देगी
-RUN chmod +x mvnw
-
-RUN ./mvnw clean package -DskipTests
+# 🚀 यहाँ हम ./mvnw की जगह सीधे ग्लोबल mvn का इस्तेमाल कर रहे हैं
+RUN mvn clean package -DskipTests
 
 # Step 2: Run the application using OpenJDK
 FROM eclipse-temurin:17-jre
