@@ -149,7 +149,7 @@ private final List<String> movies = Arrays.asList(
         "BHOOTH BANGLA",
         "MIRZAPUR THE MOVIE"
 
-     /*   // ================= HOLLYWOOD =================
+        // ================= HOLLYWOOD =================
        , "GLADIATOR",
         "MISSION IMPOSSIBLE 2",
         "CAST AWAY",
@@ -253,7 +253,7 @@ private final List<String> movies = Arrays.asList(
         "JURASSIC WORLD REBIRTH",
         "AVATAR FIRE AND ASH",
         "MISSION IMPOSSIBLE THE FINAL RECKONING",
-        "SPIDER-MAN BRAND NEW DAY"*/
+        "SPIDER-MAN BRAND NEW DAY"
 );
 
 
