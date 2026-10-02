@@ -1,41 +1,41 @@
 package com.example.moviegame.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GameState {
     private String movieName;
-    private String displayedName;
+    private List<String> displayedNameList; // 💡 स्ट्रिंग की जगह लिस्ट ली
     private int remainingAttempts;
     private Set<Character> guessedLetters;
 
     public GameState(String movie) {
         this.movieName = movie.toUpperCase();
-        this.remainingAttempts = 5;
+        this.remainingAttempts = 9; // 'BOLLYWOOD' में 9 अक्षर होते हैं
         this.guessedLetters = new HashSet<>();
 
-        // शुरुआत में ही सभी Vowels को गेस लिस्ट में डाल देंगे (आपका हिंट रूल)
-        guessedLetters.add('A');
-        guessedLetters.add('E');
-        guessedLetters.add('I');
-        guessedLetters.add('O');
-        guessedLetters.add('U');
+        // Vowels डिफ़ॉल्ट हिंट
+        guessedLetters.add('A'); guessedLetters.add('E'); guessedLetters.add('I');
+        guessedLetters.add('O'); guessedLetters.add('U');
 
-        generateDisplayedName();
+        generateDisplayedNameList();
     }
 
-    public void generateDisplayedName() {
-        StringBuilder sb = new StringBuilder();
+    public void generateDisplayedNameList() {
+        this.displayedNameList = new ArrayList<>();
         for (char c : movieName.toCharArray()) {
             if (c == ' ') {
-                sb.append("   "); // स्पेस के लिए खाली जगह
+                displayedNameList.add("SPACE"); // स्पेस के लिए पहचान
+            } else if (Character.isDigit(c)) {
+                displayedNameList.add(String.valueOf(c)); // 💡 अगर नंबर (like 2) है, तो सीधे दिखाओ
             } else if (guessedLetters.contains(c)) {
-                sb.append(c).append(" "); // अगर Vowel है या गेस सही है
+                displayedNameList.add(String.valueOf(c)); // सही अक्षर
             } else {
-                sb.append("_ "); // छिपे हुए अक्षर के लिए
+                displayedNameList.add("_"); // छिपा हुआ अक्षर
             }
         }
-        this.displayedName = sb.toString().trim();
     }
 
     public void makeGuess(char letter) {
@@ -46,28 +46,25 @@ public class GameState {
 
         guessedLetters.add(letter);
 
-        // अगर मूवी में वो अक्षर नहीं है, तो एक लाइफ कम होगी
         if (movieName.indexOf(letter) == -1) {
             remainingAttempts--;
         }
 
-        generateDisplayedName();
+        generateDisplayedNameList(); // लिस्ट दोबारा अपडेट करें
     }
 
-    // Check if player won
     public boolean isWon() {
         for (char c : movieName.toCharArray()) {
-            if (c != ' ' && !guessedLetters.contains(c)) {
+            if (c != ' ' && !Character.isDigit(c) && !guessedLetters.contains(c)) {
                 return false;
             }
         }
         return true;
     }
 
-    // Getters and Setters
-    public String getDisplayedName() { return displayedName; }
+    // Getters
+    public List<String> getDisplayedNameList() { return displayedNameList; }
     public int getRemainingAttempts() { return remainingAttempts; }
     public boolean isGameOver() { return remainingAttempts <= 0 || isWon(); }
     public Set<Character> getGuessedLetters() { return guessedLetters; }
 }
-

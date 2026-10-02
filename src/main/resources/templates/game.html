@@ -1,35 +1,101 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
 <head>
-    <title>Movie Guessing Game</title>
+    <title>Bollywood Movie Game</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 20px; }
         .movie-box { font-size: 2rem; letter-spacing: 5px; margin: 20px; font-weight: bold; }
         .keyboard { display: grid; grid-template-columns: repeat(7, 50px); gap: 10px; justify-content: center; margin-top: 20px; }
-        .key-btn { padding: 12px; font-size: 1.1rem; cursor: pointer; background: #ffffff; border: 2px solid #3498db; border-radius: 5px; font-weight: bold; transition: 0.2s; }
-        .key-btn:hover { background: #3498db; color: white; }
+        .key-btn { padding: 12px; font-size: 1.1rem; cursor: pointer; background: #ffffff; border: 2px solid #3498db; border-radius: 5px; font-weight: bold; }
+        .key-btn.used { background: #bdc3c7 !important; color: #7f8c8d !important; border-color: #95a5a6 !important; cursor: not-allowed; }
+        .win { color: green; } .lose { color: red; }
+        .msg { font-size: 1.5rem; font-weight: bold; margin: 20px; }
 
-        /* 💡 यह नई क्लास है जो दबाए हुए बटन्स पर लगेगी */
-        .key-btn.used {
-            background: #bdc3c7 !important;
-            color: #7f8c8d !important;
-            border-color: #95a5a6 !important;
-            cursor: not-allowed;
-            transform: none;
+        /* 🎬 बॉलीवुड टेक्स्ट स्टाइल */
+        .bollywood-container { font-size: 2.5rem; font-weight: bold; letter-spacing: 10px; margin: 20px 0; color: #2c3e50; }
+        /* ✂️ कटे हुए अक्षरों के लिए स्टाइल */
+        .cut { text-decoration: line-through; color: #e74c3c; opacity: 0.5; }
+
+        .movie-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 40px 0;
         }
 
-        .status { font-size: 1.2rem; margin: 15px; color: #555; }
-        .msg { font-size: 1.5rem; font-weight: bold; margin: 20px; }
-        .win { color: green; } .lose { color: red; }
+        /* हर एक अक्षर या डैश के लिए सुंदर बॉक्स */
+        .letter-box {
+            font-size: 2.5rem;
+            font-weight: bold;
+            width: 45px;
+            height: 50px;
+            text-align: center;
+            margin: 0 8px;
+            color: #2c3e50;
+            /* अगर अक्षर खाली (_) है तो सिर्फ नीचे बॉर्डर दिखेगा */
+            /*border-bottom: 4px solid #2c3e50;*/
+        }
+
+        /* 🚀 नंबर के लिए नीचे की लाइन नहीं दिखेगी, वो सीधे उभरा हुआ दिखेगा */
+        .number-box {
+            font-size: 2.5rem;
+            font-weight: bold;
+            width: 45px;
+            height: 50px;
+            text-align: center;
+            margin: 0 8px;
+            color: #e67e22; /* नंबर का रंग थोड़ा अलग */
+        }
+
+        /* दो शब्दों के बीच का बड़ा स्पेस */
+        .word-space {
+            width: 35px;
+            height: 50px;
+            margin: 0 15px;
+        }
+
+
     </style>
 </head>
 <body>
 
-<h1>🎬 Movie Guessing Game</h1>
+<!--<h1>🎬 Bollywood Movie Guessing Game</h1>-->
+<h1>🎬 बॉलीवुड मूवी अनुमान गेम</h1>
 
-<div class="status">Remaining Attempts: <span th:text="${attempts}">5</span> / 5</div>
+<!-- 💡 पुराने Attempts की जगह अब "BOLLYWOOD" लाइव कटेगा -->
+<div class="bollywood-container">
+    <!-- 10 - attempts = कटे हुए अक्षरों की संख्या -->
+    <span th:class="${9 - attempts > 0} ? 'cut' : ''">B</span>
+    <span th:class="${9 - attempts > 1} ? 'cut' : ''">O</span>
+    <span th:class="${9 - attempts > 2} ? 'cut' : ''">L</span>
+    <span th:class="${9 - attempts > 3} ? 'cut' : ''">L</span>
+    <span th:class="${9 - attempts > 4} ? 'cut' : ''">Y</span>
+    <span th:class="${9 - attempts > 5} ? 'cut' : ''">W</span>
+    <span th:class="${9 - attempts > 6} ? 'cut' : ''">O</span>
+    <span th:class="${9 - attempts > 7} ? 'cut' : ''">O</span>
+    <span th:class="${9 - attempts > 8} ? 'cut' : ''">D</span>
+</div>
 
-<div class="movie-box" th:text="${displayedName}">_ _ _ _</div>
+<!--<div class="movie-box" th:text="${displayedName}">_ _ _ _</div>-->
+<!-- 🎬 अपडेटेड मूवी नाम डिस्प्ले (बिना किसी एरर के) -->
+<div class="movie-container">
+    <th:block th:each="char : ${movieLetters}">
+
+        <!-- 1. अगर शब्दों के बीच का स्पेस है -->
+        <div th:if="${char == 'SPACE'}" class="word-space"></div>
+
+        <!-- 2. अगर वो कोई नंबर है (जैसे KGF 2 का '2') -->
+        <div th:if="${char != 'SPACE' && #strings.contains('0123456789', char)}" class="number-box" th:text="${char}"></div>
+
+        <!-- 3. अगर वो नॉर्मल अक्षर या अंडरस्कोर है -->
+        <div th:if="${char != 'SPACE' && !#strings.contains('0123456789', char)}" class="letter-box" th:text="${char}"></div>
+
+    </th:block>
+</div>
+
+
+<!-- बाकी का कीबोर्ड और वीडियो कोड पहले जैसा ही रहेगा -->
 
 <div th:if="${isGameOver}" class="msg">
 <!--    <p th:if="${isWon}" class="win">🎉 बधाई हो! आप जीत गए!</p>-->
@@ -49,6 +115,7 @@
     <!-- ❌ केस 2: जब खिलाड़ी गेम हार जाए (फनी मीम वीडियो) -->
     <div th:unless="${isWon}">
         <p class="lose">❌ गेम ओवर! आप हार गए। बहुत दुखी बात है! ❌</p>
+        <div th:text="${orginalMovie}"></div>
         <div style="margin: 20px auto; max-width: 560px;">
             <!-- लोकल हारने वाला वीडियो प्लेयर -->
             <video width="100%" height="auto" autoplay controls style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">

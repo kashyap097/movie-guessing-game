@@ -14,6 +14,7 @@ import java.util.Random;
 @RequestMapping("/game")
 public class GameController {
 
+    String randomMovie = "";
 private final List<String> movies = Arrays.asList(
 
         // ================= BOLLYWOOD =================
@@ -259,8 +260,9 @@ private final List<String> movies = Arrays.asList(
     @GetMapping("/new")
     public String startNewGame(HttpSession session) {
         Random rand = new Random();
-        String randomMovie = movies.get(rand.nextInt(movies.size()));
-
+        randomMovie = movies.get(rand.nextInt(movies.size()));
+        if (randomMovie.contains("-"))
+            randomMovie = randomMovie.replace("-"," ");
         // सेशन में नया गेम स्टेट सेव करें
         session.setAttribute("gameState", new GameState(randomMovie));
         return "redirect:/game";
@@ -273,12 +275,13 @@ private final List<String> movies = Arrays.asList(
             return "redirect:/game/new";
         }
 
-        model.addAttribute("displayedName", gameState.getDisplayedName());
+//        model.addAttribute("displayedName", gameState.getDisplayedName());
+        model.addAttribute("movieLetters", gameState.getDisplayedNameList()); // 💡 लिस्ट पास की
         model.addAttribute("attempts", gameState.getRemainingAttempts());
         model.addAttribute("isGameOver", gameState.isGameOver());
         model.addAttribute("isWon", gameState.isWon());
         model.addAttribute("guessedLetters", gameState.getGuessedLetters());
-
+        model.addAttribute("orginalMovie", randomMovie);
         return "game"; // game.html टेम्पलेट लोड होगा
     }
 
