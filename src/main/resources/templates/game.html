@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org">
 <head>
-    <title>Bollywood and Hollowood Movie Game</title>
+    <title>Bollywood Movie Game</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: #f4f4f9; padding: 20px; }
         .movie-box { font-size: 2rem; letter-spacing: 5px; margin: 20px; font-weight: bold; }
@@ -62,20 +62,38 @@
 
 <!--<h1>🎬 Bollywood Movie Guessing Game</h1>-->
 <h1>🎬 बॉलीवुड/हॉलीवुड मूवी अनुमान गेम</h1>
+<!--<h1 th:text="${movieType} + ' मूवी अनुमान गेम 🎬'"></h1>-->
 
-<!-- 💡 पुराने Attempts की जगह अब "BOLLYWOOD" लाइव कटेगा -->
+<!-- 🎬 अपडेटेड टेक्स्ट कंटेनर (बॉलीवुड या हॉलीवुड के हिसाब से) -->
 <div class="bollywood-container">
-    <!-- 10 - attempts = कटे हुए अक्षरों की संख्या -->
-    <span th:class="${9 - attempts > 0} ? 'cut' : ''">B</span>
-    <span th:class="${9 - attempts > 1} ? 'cut' : ''">O</span>
-    <span th:class="${9 - attempts > 2} ? 'cut' : ''">L</span>
-    <span th:class="${9 - attempts > 3} ? 'cut' : ''">L</span>
-    <span th:class="${9 - attempts > 4} ? 'cut' : ''">Y</span>
-    <span th:class="${9 - attempts > 5} ? 'cut' : ''">W</span>
-    <span th:class="${9 - attempts > 6} ? 'cut' : ''">O</span>
-    <span th:class="${9 - attempts > 7} ? 'cut' : ''">O</span>
-    <span th:class="${9 - attempts > 8} ? 'cut' : ''">D</span>
+    <!-- 1. अगर मूवी BOLLYWOOD है -->
+    <th:block th:if="${movieType == 'bollywood'}">
+        <span th:class="${9 - attempts > 0} ? 'cut' : ''">B</span>
+        <span th:class="${9 - attempts > 1} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 2} ? 'cut' : ''">L</span>
+        <span th:class="${9 - attempts > 3} ? 'cut' : ''">L</span>
+        <span th:class="${9 - attempts > 4} ? 'cut' : ''">Y</span>
+        <span th:class="${9 - attempts > 5} ? 'cut' : ''">W</span>
+        <span th:class="${9 - attempts > 6} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 7} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 8} ? 'cut' : ''">D</span>
+    </th:block>
+
+    <!-- 2. अगर मूवी HOLLYWOOD है -->
+    <th:block th:unless="${movieType == 'bollywood'}">
+        <span th:class="${9 - attempts > 0} ? 'cut' : ''">H</span>
+        <span th:class="${9 - attempts > 1} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 2} ? 'cut' : ''">L</span>
+        <span th:class="${9 - attempts > 3} ? 'cut' : ''">L</span>
+        <span th:class="${9 - attempts > 4} ? 'cut' : ''">Y</span>
+        <span th:class="${9 - attempts > 5} ? 'cut' : ''">W</span>
+        <span th:class="${9 - attempts > 6} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 7} ? 'cut' : ''">O</span>
+        <span th:class="${9 - attempts > 8} ? 'cut' : ''">D</span>
+    </th:block>
+
 </div>
+
 
 <!--<div class="movie-box" th:text="${displayedName}">_ _ _ _</div>-->
 <!-- 🎬 अपडेटेड मूवी नाम डिस्प्ले (बिना किसी एरर के) -->
@@ -124,7 +142,7 @@
             </video>
         </div>
     </div>
-    <a href="/game/new"><button style="padding:10px 20px; font-size:1rem; cursor:pointer;">New Game</button></a>
+<!--    <a href="/game/new"><button style="padding:10px 20px; font-size:1rem; cursor:pointer;">New Game</button></a>-->
 </div>
 
 <!-- अपडेटेड कीबोर्ड -->
@@ -150,7 +168,7 @@
         </th:block>
     </div>
 </div>
-
+<a href="/game/new"><button style="padding:10px 40px; margin-top: 2rem; font-size:1rem; cursor:pointer; ">New Game</button></a>
 
 </body>
 </html>
