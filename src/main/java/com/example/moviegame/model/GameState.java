@@ -10,11 +10,13 @@ public class GameState {
     private List<String> displayedNameList; // 💡 स्ट्रिंग की जगह लिस्ट ली
     private int remainingAttempts;
     private Set<Character> guessedLetters;
+    private String movieType;
 
-    public GameState(String movie) {
+    public GameState(String movie, String type) {
         this.movieName = movie.toUpperCase();
         this.remainingAttempts = 9; // 'BOLLYWOOD' में 9 अक्षर होते हैं
         this.guessedLetters = new HashSet<>();
+        this.movieType = type;
 
         // Vowels डिफ़ॉल्ट हिंट
         guessedLetters.add('A'); guessedLetters.add('E'); guessedLetters.add('I');
@@ -67,4 +69,8 @@ public class GameState {
     public int getRemainingAttempts() { return remainingAttempts; }
     public boolean isGameOver() { return remainingAttempts <= 0 || isWon(); }
     public Set<Character> getGuessedLetters() { return guessedLetters; }
+
+    public String getMovieType() {
+        return movieType;
+    }
 }
